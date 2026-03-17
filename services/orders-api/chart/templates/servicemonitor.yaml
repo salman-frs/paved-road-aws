@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: orders-api
+  namespace: observability
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ printf "%s-%s" .Values.service.name .Values.environment }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.service.name }}
+  endpoints:
+    - port: http
+      path: /metrics

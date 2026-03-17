@@ -1,0 +1,20 @@
+backstage:
+  extraEnvVars:
+    - name: APP_CONFIG_app_baseUrl
+      value: https://backstage.salmanfrs.dev
+    - name: APP_CONFIG_backend_baseUrl
+      value: https://backstage.salmanfrs.dev
+    - name: APP_CONFIG_techdocs_builder
+      value: local
+    - name: APP_CONFIG_catalog_locations
+      value: |
+        - type: url
+          target: https://raw.githubusercontent.com/salman-frs/paved-road-aws/main/services/orders-api/catalog-info.yaml
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: nginx
+  host: backstage.salmanfrs.dev

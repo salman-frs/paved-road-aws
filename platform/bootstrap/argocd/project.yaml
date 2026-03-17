@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: paved-road
+  namespace: argocd
+spec:
+  description: Paved-road project for service applications managed from gitops/
+  sourceRepos:
+    - https://github.com/salman-frs/paved-road-aws.git
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'

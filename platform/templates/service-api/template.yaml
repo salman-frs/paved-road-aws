@@ -1,0 +1,76 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: service-api
+  title: Production API Service
+  description: Generate a production-ready TypeScript HTTP API on the paved road.
+  tags:
+    - aws
+    - eks
+    - platform
+    - typescript
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: Service Details
+      required:
+        - serviceName
+        - owner
+        - system
+      properties:
+        serviceName:
+          title: Service name
+          type: string
+          pattern: '^[a-z0-9-]+$'
+        owner:
+          title: Owner
+          type: string
+        system:
+          title: System
+          type: string
+        port:
+          title: Runtime port
+          type: integer
+          default: 3000
+        includeBackingDependency:
+          title: Include demo backing dependency
+          type: boolean
+          default: false
+
+  steps:
+    - id: fetch-base
+      name: Render service skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          serviceName: ${{ parameters.serviceName }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          port: ${{ parameters.port }}
+          backingDependency: ${{ parameters.includeBackingDependency ? 'sqs' : 'none' }}
+
+    - id: open-pr
+      name: Open pull request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?repo=paved-road-aws&owner=salman-frs
+        branchName: scaffold/${{ parameters.serviceName }}
+        title: "feat(service): scaffold ${{ parameters.serviceName }}"
+        description: |
+          Generated from the `service-api` Backstage template.
+          This PR contains the service code, infra wrapper, GitOps assets, observability defaults, and scorecard references.
+
+    - id: register
+      name: Register in catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['open-pr'].output.repoContentsUrl }}
+        catalogInfoPath: /services/${{ parameters.serviceName }}/catalog-info.yaml
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps['open-pr'].output.remoteUrl }}

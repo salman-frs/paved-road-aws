@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.serviceName }}
+  description: Production-ready HTTP API generated from the paved-road template.
+  annotations:
+    github.com/project-slug: salman-frs/paved-road-aws
+    backstage.io/source-location: url:https://github.com/salman-frs/paved-road-aws/tree/main/services/${{ values.serviceName }}
+    portfolio.io/runbook: ./docs/runbook.md
+    portfolio.io/dashboard: ./dashboards/service-overview.json
+    portfolio.io/alerts: ./alerts/prometheus-rules.yaml
+    portfolio.io/scorecard: ./docs/scorecard.md
+spec:
+  type: service
+  owner: ${{ values.owner }}
+  lifecycle: production
+  system: ${{ values.system }}

@@ -1,0 +1,18 @@
+service:
+  name: ${{ values.serviceName }}
+  port: ${{ values.port }}
+
+image:
+  repository: 000000000000.dkr.ecr.ap-southeast-3.amazonaws.com/dev/${{ values.serviceName }}
+  digest: sha256:replace-me
+
+serviceAccount:
+  name: ${{ values.serviceName }}
+  roleArn: arn:aws:iam::123456789012:role/${{ values.serviceName }}-dev-irsa
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ${{ values.serviceName }}.dev.salmanfrs.dev
+
+environment: dev

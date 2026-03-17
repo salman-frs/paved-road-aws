@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: orders-api-dev
+  namespace: argocd
+spec:
+  project: paved-road
+  source:
+    repoURL: https://github.com/salman-frs/paved-road-aws.git
+    targetRevision: main
+    path: services/orders-api/chart
+    helm:
+      valueFiles:
+        - ../../../gitops/dev/orders-api/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: orders-api-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

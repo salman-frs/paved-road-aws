@@ -1,0 +1,18 @@
+service:
+  name: orders-api
+  port: 3000
+
+image:
+  repository: 000000000000.dkr.ecr.ap-southeast-3.amazonaws.com/dev/orders-api
+  digest: sha256:replace-me
+
+serviceAccount:
+  name: orders-api
+  roleArn: arn:aws:iam::123456789012:role/paved-road-aws-dev-orders-api-irsa
+
+environment: dev
+
+ingress:
+  enabled: true
+  className: nginx
+  host: orders-api.dev.salmanfrs.dev

@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: orders-api
+  namespace: observability
+spec:
+  groups:
+    - name: orders-api.rules
+      rules:
+        - alert: OrdersApiHighErrorRate
+          expr: sum(rate(http_server_duration_count{service_name="orders-api",http_response_status_code=~"5.."}[5m])) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Elevated 5xx rate for orders-api

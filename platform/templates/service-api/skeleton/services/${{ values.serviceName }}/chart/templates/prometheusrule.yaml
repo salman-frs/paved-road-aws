@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: observability
+spec:
+  groups:
+    - name: {{ .Values.service.name }}.rules
+      rules:
+        - alert: {{ printf "%sHighErrorRate" .Values.service.name | replace "-" "" }}
+          expr: sum(rate(http_server_duration_count{service_name="{{ .Values.service.name }}",http_response_status_code=~"5.."}[5m])) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Elevated 5xx rate for {{ .Values.service.name }}

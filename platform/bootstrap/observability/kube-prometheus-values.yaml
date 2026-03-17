@@ -1,0 +1,12 @@
+grafana:
+  adminPassword: changeme
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.salmanfrs.dev
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false

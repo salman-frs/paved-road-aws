@@ -1,0 +1,26 @@
+{
+  "title": "orders-api Overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "title": "Request Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_duration_count{service_name=\"orders-api\"}[5m]))"
+        }
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_duration_count{service_name=\"orders-api\",http_response_status_code=~\"5..\"}[5m]))"
+        }
+      ]
+    }
+  ]
+}

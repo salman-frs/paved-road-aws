@@ -1,0 +1,8 @@
+environment               = "dev"
+aws_region                = "ap-southeast-3"
+cluster_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/oidc.eks.ap-southeast-3.amazonaws.com/id/EXAMPLE"
+cluster_oidc_provider_url = "https://oidc.eks.ap-southeast-3.amazonaws.com/id/EXAMPLE"
+enable_public_dns         = true
+cloudflare_zone_id        = "cloudflare-zone-id"
+base_domain               = "salmanfrs.dev"
+backing_dependency        = "${{ values.backingDependency }}"
