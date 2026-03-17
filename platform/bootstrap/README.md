@@ -29,3 +29,7 @@ terraform -chdir=platform/bootstrap/terraform init -backend=false
 terraform -chdir=platform/bootstrap/terraform validate
 terraform -chdir=platform/bootstrap/terraform fmt -check
 ```
+
+## Cloudflare Auth
+
+The Cloudflare provider reads authentication from the environment, not from a Terraform input variable. Export `CLOUDFLARE_API_TOKEN` before running `terraform apply`, then pass only `cloudflare_zone_id` and `ingress_public_hostname` as Terraform variables.

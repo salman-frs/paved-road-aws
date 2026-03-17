@@ -47,7 +47,7 @@ variable "private_subnet_cidrs" {
 }
 
 variable "cloudflare_zone_id" {
-  description = "Cloudflare zone id for salmanfrs.dev."
+  description = "Cloudflare zone id"
   type        = string
   default     = null
   nullable    = true

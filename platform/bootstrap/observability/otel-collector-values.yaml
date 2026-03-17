@@ -1,16 +1,25 @@
 mode: deployment
 
-config:
+image:
+  repository: otel/opentelemetry-collector-contrib
+
+alternateConfig:
+  extensions:
+    health_check:
+      endpoint: ${env:MY_POD_IP}:13133
   receivers:
     otlp:
       protocols:
-        http:
         grpc:
+          endpoint: ${env:MY_POD_IP}:4317
+        http:
+          endpoint: ${env:MY_POD_IP}:4318
   processors:
     batch: {}
   exporters:
     debug: {}
   service:
+    extensions: [health_check]
     pipelines:
       traces:
         receivers: [otlp]

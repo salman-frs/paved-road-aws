@@ -50,7 +50,7 @@ spec:
           owner: ${{ parameters.owner }}
           system: ${{ parameters.system }}
           port: ${{ parameters.port }}
-          backingDependency: ${{ parameters.includeBackingDependency ? 'sqs' : 'none' }}
+          backingDependency: "${{ parameters.includeBackingDependency ? 'sqs' : 'none' }}"
 
     - id: open-pr
       name: Open pull request

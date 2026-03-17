@@ -1,15 +1,27 @@
 backstage:
-  extraEnvVars:
-    - name: APP_CONFIG_app_baseUrl
-      value: https://backstage.salmanfrs.dev
-    - name: APP_CONFIG_backend_baseUrl
-      value: https://backstage.salmanfrs.dev
-    - name: APP_CONFIG_techdocs_builder
-      value: local
-    - name: APP_CONFIG_catalog_locations
-      value: |
+  appConfig:
+    app:
+      title: Salman FRS Platform
+      baseUrl: https://backstage.salmanfrs.dev
+    organization:
+      name: Salman FRS
+    backend:
+      baseUrl: https://backstage.salmanfrs.dev
+    integrations:
+      github:
+        - host: github.com
+    auth:
+      providers:
+        guest:
+          dangerouslyAllowOutsideDevelopment: true
+    techdocs:
+      builder: local
+    catalog:
+      locations:
         - type: url
-          target: https://raw.githubusercontent.com/salman-frs/paved-road-aws/main/services/orders-api/catalog-info.yaml
+          target: https://github.com/salman-frs/paved-road-aws/blob/main/services/orders-api/catalog-info.yaml
+        - type: url
+          target: https://github.com/salman-frs/paved-road-aws/blob/main/platform/templates/service-api/template.yaml
 
 service:
   type: ClusterIP

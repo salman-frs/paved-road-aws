@@ -1,4 +1,9 @@
+global:
+  domain: argocd.salmanfrs.dev
+
 configs:
+  cm:
+    url: https://argocd.salmanfrs.dev
   params:
     server.insecure: true
 
@@ -6,8 +11,7 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hosts:
-      - argocd.salmanfrs.dev
+    hostname: argocd.salmanfrs.dev
 
 controller:
   metrics:
