@@ -26,9 +26,28 @@ bootstrap-cluster-init:
       -backend-config="region={{ aws_region }}"
 
 bootstrap-cluster-apply:
-    terraform -chdir=platform/bootstrap/cluster/terraform apply \
-      -var "aws_region={{ aws_region }}" \
-      -var "base_domain={{ base_domain }}"
+    manages_dns="false"; \
+    if terraform -chdir=platform/bootstrap/cluster/terraform state list 2>/dev/null | rg -q '^cloudflare_dns_record\.'; then manages_dns="true"; fi; \
+    hostname="$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || true)"; \
+    if [ "$manages_dns" = "true" ] && [ -z "{{ cloudflare_zone_id }}" ]; then \
+      echo "CLOUDFLARE_ZONE_ID is required before rerunning bootstrap-cluster-apply because this state already manages bootstrap DNS." >&2; \
+      exit 1; \
+    fi; \
+    if [ "$manages_dns" = "true" ] && [ -z "$hostname" ]; then \
+      echo "Ingress load balancer hostname is required before rerunning bootstrap-cluster-apply because this state already manages bootstrap DNS." >&2; \
+      exit 1; \
+    fi; \
+    if [ -n "{{ cloudflare_zone_id }}" ] && [ -n "$hostname" ]; then \
+      terraform -chdir=platform/bootstrap/cluster/terraform apply \
+        -var "aws_region={{ aws_region }}" \
+        -var "base_domain={{ base_domain }}" \
+        -var "cloudflare_zone_id={{ cloudflare_zone_id }}" \
+        -var "ingress_public_hostname=$hostname"; \
+    else \
+      terraform -chdir=platform/bootstrap/cluster/terraform apply \
+        -var "aws_region={{ aws_region }}" \
+        -var "base_domain={{ base_domain }}"; \
+    fi
 
 bootstrap-kubeconfig:
     cluster_name="$(terraform -chdir=platform/bootstrap/cluster/terraform output -raw cluster_name)"; \
@@ -51,7 +70,14 @@ bootstrap-dns:
       echo "Set CLOUDFLARE_ZONE_ID before running bootstrap-dns" >&2; \
       exit 1; \
     fi; \
-    hostname="$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"; \
+    hostname=""; \
+    for attempt in {1..45}; do \
+      hostname="$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || true)"; \
+      if [ -n "$hostname" ]; then \
+        break; \
+      fi; \
+      sleep 10; \
+    done; \
     if [ -z "$hostname" ]; then \
       echo "Ingress load balancer hostname is not ready yet" >&2; \
       exit 1; \

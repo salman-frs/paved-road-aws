@@ -17,6 +17,12 @@ backstage:
     techdocs:
       builder: local
     catalog:
+      rules:
+        - allow:
+            - Component
+            - API
+            - Location
+            - Template
       locations:
         - type: url
           target: https://github.com/salman-frs/paved-road-aws/blob/main/services/orders-api/catalog-info.yaml
