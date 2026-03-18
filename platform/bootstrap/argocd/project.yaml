@@ -7,6 +7,10 @@ spec:
   description: Paved-road project for service applications managed from gitops/
   sourceRepos:
     - https://github.com/salman-frs/paved-road-aws.git
+    - https://kubernetes.github.io/ingress-nginx
+    - https://prometheus-community.github.io/helm-charts
+    - https://open-telemetry.github.io/opentelemetry-helm-charts
+    - https://backstage.github.io/charts
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc

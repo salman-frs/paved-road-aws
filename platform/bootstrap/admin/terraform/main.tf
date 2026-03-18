@@ -6,63 +6,6 @@ provider "aws" {
   }
 }
 
-provider "cloudflare" {}
-
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "6.6.0"
-
-  name = "${var.project_name}-vpc"
-  cidr = var.vpc_cidr
-
-  azs             = local.availability_zones
-  public_subnets  = var.public_subnet_cidrs
-  private_subnets = var.private_subnet_cidrs
-
-  enable_nat_gateway = true
-  single_nat_gateway = true
-
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = "1"
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = "1"
-  }
-}
-
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "21.15.1"
-
-  name                    = var.cluster_name
-  kubernetes_version      = local.cluster_version
-
-  addons = {
-    vpc-cni = {
-      before_compute = true
-    }
-    kube-proxy = {}
-    coredns    = {}
-  }
-
-  endpoint_public_access                   = true
-  enable_irsa                              = true
-  enable_cluster_creator_admin_permissions = true
-
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-
-  eks_managed_node_groups = {
-    default = {
-      instance_types = ["t3.medium"]
-      desired_size   = 2
-      min_size       = 2
-      max_size       = 3
-    }
-  }
-}
-
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "${var.project_name}-${data.aws_caller_identity.current.account_id}-tfstate"
 }
@@ -138,29 +81,6 @@ data "aws_iam_policy_document" "github_assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "bootstrap_permissions" {
-  statement {
-    sid = "BootstrapCore"
-
-    actions = [
-      "acm:*",
-      "autoscaling:*",
-      "cloudformation:*",
-      "dynamodb:*",
-      "ec2:*",
-      "eks:*",
-      "elasticloadbalancing:*",
-      "iam:*",
-      "kms:*",
-      "logs:*",
-      "s3:*",
-      "ssm:*"
-    ]
-
-    resources = ["*"]
-  }
-}
-
 data "aws_iam_policy_document" "service_permissions" {
   statement {
     sid = "ServiceStack"
@@ -176,17 +96,6 @@ data "aws_iam_policy_document" "service_permissions" {
 
     resources = ["*"]
   }
-}
-
-resource "aws_iam_role" "github_bootstrap" {
-  name               = "${var.project_name}-github-bootstrap"
-  assume_role_policy = data.aws_iam_policy_document.github_assume_role.json
-}
-
-resource "aws_iam_role_policy" "github_bootstrap" {
-  name   = "${var.project_name}-github-bootstrap"
-  role   = aws_iam_role.github_bootstrap.id
-  policy = data.aws_iam_policy_document.bootstrap_permissions.json
 }
 
 resource "aws_iam_role" "github_service_stack" {

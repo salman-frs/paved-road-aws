@@ -1,13 +1,3 @@
-locals {
-  bootstrap_public_hosts = {
-    "argocd.${var.base_domain}"    = true
-    "backstage.${var.base_domain}" = true
-    "grafana.${var.base_domain}"   = true
-  }
-
-  bootstrap_dns_enabled = var.cloudflare_zone_id != null && var.ingress_public_hostname != null
-}
-
 resource "cloudflare_dns_record" "ingress_anchor" {
   count = local.bootstrap_dns_enabled ? 1 : 0
 

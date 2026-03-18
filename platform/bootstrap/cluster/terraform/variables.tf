@@ -16,18 +16,6 @@ variable "cluster_name" {
   default     = "paved-road-demo"
 }
 
-variable "github_repository" {
-  description = "GitHub repo in owner/name form used to scope OIDC trust."
-  type        = string
-  default     = "salman-frs/paved-road-aws"
-}
-
-variable "github_default_branch" {
-  description = "Default branch allowed to assume GitHub OIDC roles."
-  type        = string
-  default     = "main"
-}
-
 variable "vpc_cidr" {
   description = "CIDR block for the shared VPC."
   type        = string
@@ -47,7 +35,7 @@ variable "private_subnet_cidrs" {
 }
 
 variable "cloudflare_zone_id" {
-  description = "Cloudflare zone id"
+  description = "Cloudflare zone id."
   type        = string
   default     = null
   nullable    = true
@@ -67,7 +55,7 @@ variable "ingress_public_hostname" {
 }
 
 variable "tags" {
-  description = "Additional tags applied to all bootstrap resources."
+  description = "Additional tags applied to all cluster resources."
   type        = map(string)
   default     = {}
 }

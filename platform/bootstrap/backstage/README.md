@@ -1,15 +1,11 @@
 # Backstage Bootstrap Assets
 
-These Helm values deploy Backstage as the self-service entry point. The Backstage instance is expected to load `platform/templates/service-api/template.yaml` and authenticate to GitHub with repository PR permissions.
+These Helm values are consumed by the Argo-managed Backstage application. Backstage is the self-service entry point and is expected to load `platform/templates/service-api/template.yaml` and authenticate to GitHub with repository PR permissions.
 
-## Install
+## Notes
 
-```bash
-helm repo add backstage https://backstage.github.io/charts
-helm upgrade --install backstage backstage/backstage \
-  --namespace backstage \
-  --create-namespace \
-  -f platform/bootstrap/backstage/values.yaml
-```
+- Bootstrap installs only minimal Argo locally.
+- Argo then deploys Backstage from the child application at [platform/bootstrap/argocd/apps/backstage.yaml](/Users/salman/codex/paved-road-aws/platform/bootstrap/argocd/apps/backstage.yaml).
+- This values file remains the single repo-owned source of truth for the Backstage chart configuration.
 
 Public hostname: `backstage.salmanfrs.dev`
